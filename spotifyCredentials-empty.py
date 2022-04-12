@@ -1,0 +1,3 @@
+spotifyUsername=''
+spotifyClientId=''
+spotifyClientSecret=''
