@@ -6,7 +6,6 @@ from collections import namedtuple
 from tabnanny import verbose
 
 #external dependencies
-import m3u8
 import spotipy
 import spotipy.util as util
 from thefuzz import fuzz, process
@@ -173,8 +172,11 @@ def tracksFromFolder(path: str):
     return [i.stem for i in sortedFiles if i.is_file()]
 
 def tracksFromPlaylist(path: str):
-    playlist = m3u8.load(path)
-    return [Path(item).stem for item in playlist.files]
+    files = []
+    for line in open(path,mode="r",encoding="UTF-8"):
+        if (line and line[0]!='#'):
+            files.append( Path(line).stem )
+    return files
 
 def main(args) -> int:
     logging.basicConfig( level=logging.INFO if args.verbose else logging.WARNING )
@@ -220,5 +222,4 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dryrun', help='just try to parse and look up ids, do not create playlist', default=False, action='store_true')
     parser.add_argument('-p', '--public', help='make the resulting playlist public. default is private', default=False, action='store_true')
     parser.add_argument('-v', '--verbose', help='show additional log messages', default=False, action='store_true')
-    parser.add_argument('-a', '--all', help='include matches which have live or karaoke in the name', default=False, action='store_true')
     sys.exit(main(parser.parse_args()))
